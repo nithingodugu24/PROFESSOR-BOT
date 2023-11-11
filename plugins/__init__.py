@@ -4,16 +4,13 @@ from database.users_chats_db import db
 from info import SUPPORT_CHAT
 from aiohttp import web
 from utils import temp
-from datetime import datetime
 
-current_time = datetime.now()
 
 routes = web.RouteTableDef()
 
 @routes.get("/", allow_head=True)
 async def root_route_handler(request):
-    uptime = current_time - temp.START_TIME
-    return web.json_response(text=f'{{"status":"running","dev":"hasiba518738","uptime":"{uptime}"}}')
+    return web.json_response(text='{"status":"running","dev":"hasiba518738"}')
 
 async def web_server():
     web_app = web.Application(client_max_size=30000000)
