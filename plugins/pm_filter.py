@@ -96,7 +96,8 @@ async def pm_spoll_tester(bot, query):
         await k.delete()
 
 
-async def pm_AutoFilter(client, msg, pmspoll=False):    
+async def pm_AutoFilter(client, msg, pmspoll=False):
+    
     if not pmspoll:
         message = msg   
         if message.text.startswith("/"): return  # ignore commands
@@ -110,6 +111,8 @@ async def pm_AutoFilter(client, msg, pmspoll=False):
         message = msg.message.reply_to_message  # msg will be callback query
         search, files, offset, total_results = pmspoll
     pre = 'pmfilep' if PROTECT_CONTENT else 'pmfile'
+    searchLoader = await msg.reply('<b>Searching for Results</b>') 
+    
 
     if SHORT_URL and SHORT_API:          
         if SINGLE_BUTTON:
@@ -137,6 +140,7 @@ async def pm_AutoFilter(client, msg, pmspoll=False):
         btn.append(
             [InlineKeyboardButton(text="❄️ ᴩᴀɢᴇꜱ 1/1", callback_data="pages")]
         )
+    await searchLoader.edit('<b>Searching for Results...</b>')   
     if PM_IMDB:
         imdb = await get_poster(search)
     else:
@@ -178,6 +182,7 @@ async def pm_AutoFilter(client, msg, pmspoll=False):
         )
     else:
         cap = f"Hᴇʀᴇ Is Wʜᴀᴛ I Fᴏᴜɴᴅ Fᴏʀ Yᴏᴜʀ Qᴜᴇʀʏ {search}"
+    await searchLoader.delete()
     if imdb and imdb.get('poster'):
         try:
             hehe = await message.reply_photo(photo=imdb.get('poster'), caption=cap, quote=True, reply_markup=InlineKeyboardMarkup(btn))
