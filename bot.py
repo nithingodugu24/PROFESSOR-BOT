@@ -1,6 +1,6 @@
 import os, math, logging, datetime, pytz
 import logging.config
-import requests
+
 from pyrogram.errors import BadRequest, Unauthorized
 from pyrogram import Client
 from pyrogram import types
@@ -52,31 +52,21 @@ class Bot(Client):
         curr = datetime.datetime.now(pytz.timezone("Asia/Kolkata"))
         date = curr.strftime('%d %B, %Y')
         tame = curr.strftime('%I:%M:%S %p')
-        logger.info(LOG_MSG.format(me.first_name, date, tame, __copyright__))
-        try: await self.send_message(LOG_CHANNEL, text=LOG_MSG.format(me.first_name, date, tame, __copyright__), disable_web_page_preview=True)   
+        logger.info(LOG_MSG.format(me.first_name, date, tame, __repo__, __version__, __license__, __copyright__))
+        try: await self.send_message(LOG_CHANNEL, text=LOG_MSG.format(me.first_name, date, tame, __repo__, __version__, __license__, __copyright__), disable_web_page_preview=True)   
         except Exception as e: logger.warning(f"Bot Isn't Able To Send Message To LOG_CHANNEL \n{e}")
         if WEBHOOK is True:
             app = web.AppRunner(await web_server())
             await app.setup()
-            await web.TCPSite(app, "0.0.0.0", 8080).start()
+            await web.TCPSite(app, "0.0.0.0", 8081).start()
             logger.info("Web Response Is Running......🕸️")
-            notify_url = "https://api.telegram.org/bot5249462923:AAEquCkhHvyVmqMfLZHSLq6DC9kV0G7COjI/sendMessage?chat_id=1914271571&text=Bot Starting ..."
-            requests.get(notify_url)
-            
-    async def stop(self, *args):
-        try:
-            if self.is_initialized:
-                me = await self.get_me()
-                logger.info(f"{me.first_name} is_...  ♻️Restarting...")
                 
-                # Send an HTTP request notification
-                notify_url = "https://api.telegram.org/bot5249462923:AAEquCkhHvyVmqMfLZHSLq6DC9kV0G7COjI/sendMessage?chat_id=1914271571&text=Bot Stpopping"
-                payload = {"message": f"{me.first_name} is restarting"}
-                await requests.get(notify_url)
-        except Exception as e:
-            logger.error(f"Error during stop: {e}")
-        finally:
-            await super().stop()
+    async def stop(self, *args):
+        if self.is_initialized and not self.is_closed:
+            me = await self.get_me()
+            logger.info(f"{me.first_name} is_...  ♻️Restarting...")
+        await super().stop()
+
 
     async def iter_messages(self, chat_id: Union[int, str], limit: int, offset: int = 0) -> Optional[AsyncGenerator["types.Message", None]]:                       
         current = offset
@@ -90,11 +80,5 @@ class Bot(Client):
                 current += 1
 
 
-
-
+        
 Bot().run()
-
-
-
-
-
