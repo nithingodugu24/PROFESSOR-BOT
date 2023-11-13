@@ -1,16 +1,19 @@
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram import Client, filters, enums 
 from database.users_chats_db import db
-from info import SUPPORT_CHAT
+from info import SUPPORT_CHAT,UPTIME
 from aiohttp import web
-import logging, re, asyncio, time, shutil, psutil, os, sys
 from datetime import datetime
+import asyncio, re, ast, time, math, logging, random, os, pyrogram, shutil, psutil 
+import pytz
+
 import json
 # Helper Function
 from Script import script
 from utils import get_size, is_subscribed, get_poster, search_gagala, temp, get_settings, save_group_settings, get_shortlink, get_time, humanbytes 
 from .ExtraMods.carbon import make_carbon
-import info
+from info import ADMINS, AUTH_CHANNEL, AUTH_USERS, CUSTOM_FILE_CAPTION, AUTH_GROUPS, P_TTI_SHOW_OFF, PICS, IMDB, PM_IMDB, SINGLE_BUTTON, PROTECT_CONTENT, \
+    SPELL_CHECK_REPLY, IMDB_TEMPLATE, IMDB_DELET_TIME, START_MESSAGE, PMFILTER, G_FILTER, BUTTON_LOCK, BUTTON_LOCK_TEXT, SHORT_URL, SHORT_API
 
 routes = web.RouteTableDef()
 
@@ -24,15 +27,30 @@ async def root_route_handler(request):
 
 @routes.get("/serverStatistics", allow_head=True)
 async def server_statistics_handler(request):
+    current_utc_time = datetime.utcnow().replace(tzinfo=pytz.utc)
+    epoch_utc_time = datetime.utcfromtimestamp(UPTIME).replace(tzinfo=pytz.utc)
+    time_difference = current_utc_time - epoch_utc_time
+    days = time_difference.days
+    hours, remainder = divmod(time_difference.seconds, 3600)
+    services = [process for process in psutil.process_iter(['pid', 'name']) if process.info['name'].lower() == 'services.exe']
+    num_services = len(services)
+    minutes, seconds = divmod(remainder, 60)
+    num_threads = psutil.cpu_count(logical=False)  # Physical CPU cores
+    num_processes = psutil.cpu_count(logical=True)  # Total CPU cores including hyper-threading
+
     total, used, free = shutil.disk_usage(".")
     stats = {
-        "uptime": get_time(time.time() - info.UPTIME),
+        "uptime": f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds" ,
+        "startedAt": UPTIME,
         "cpu_percent": psutil.cpu_percent(),
         "memory_percent": psutil.virtual_memory().percent,
         "total_disk_space": humanbytes(total),
         "used_disk_space": humanbytes(used),
         "disk_usage_percent": psutil.disk_usage('/').percent,
-        "free_disk_space": humanbytes(free)
+        "free_disk_space": humanbytes(free),
+        "num_services": num_services,
+        "num_threads": num_threads,
+        "num_processes": num_processes,
     }
     return web.json_response(text=json.dumps(stats))
 

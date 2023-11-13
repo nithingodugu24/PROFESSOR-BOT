@@ -53,8 +53,11 @@ class Bot(Client):
         date = curr.strftime('%d %B, %Y')
         tame = curr.strftime('%I:%M:%S %p')
         logger.info(LOG_MSG.format(me.first_name, date, tame, __repo__, __version__, __license__, __copyright__))
-        try: await self.send_message(LOG_CHANNEL, text=LOG_MSG.format(me.first_name, date, tame, __repo__, __version__, __license__, __copyright__), disable_web_page_preview=True)   
-        except Exception as e: logger.warning(f"Bot Isn't Able To Send Message To LOG_CHANNEL \n{e}")
+        try: 
+            await self.send_message(LOG_CHANNEL, text=LOG_MSG.format(me.first_name, date, tame, __repo__, __version__, __license__, __copyright__), disable_web_page_preview=True)
+        except Exception as e:
+            logger.warning(f"Bot Isn't Able To Send Message To LOG_CHANNEL \n{e}")
+
         if WEBHOOK is True:
             app = web.AppRunner(await web_server())
             await app.setup()
@@ -62,26 +65,16 @@ class Bot(Client):
             logger.info("Web Response Is Running......🕸️")
             
     async def stop(self, *args):
+        # Ensure the client is started before calling get_me
+        if not self.is_initialized:
+            await self.start()
+
         await super().stop()
         me = await self.get_me()
         logger.info(f"{me.first_name} is_...  ♻️Restarting...")
 
-    async def iter_messages(self, chat_id: Union[int, str], limit: int, offset: int = 0) -> Optional[AsyncGenerator["types.Message", None]]:                       
-        current = offset
-        while True:
-            new_diff = min(200, limit - current)
-            if new_diff <= 0:
-                return
-            messages = await self.get_messages(chat_id, list(range(current, current+new_diff+1)))
-            for message in messages:
-                yield message
-                current += 1
+# Create an instance of the Bot class
+my_bot = Bot()
 
-
-        
-Bot().run()
-
-
-
-
-
+# Run the bot
+my_bot.run()
