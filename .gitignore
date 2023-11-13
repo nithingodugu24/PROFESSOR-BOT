@@ -1,0 +1,12 @@
+# Ignore compiled Python files
+*.pyc
+
+# Ignore virtual environment folder
+venv/
+
+# Ignore bot sessions
+Professor-Bot.session
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
