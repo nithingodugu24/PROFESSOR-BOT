@@ -64,7 +64,7 @@ class Bot(Client):
     async def stop(self, *args):
         if self.is_initialized and not self.is_closed:
             me = await self.get_me()
-            logger.info(f"{me.first_name} is_...  ♻️Restarting...")
+            logger.info(f"{me.first_name} is ♻Stopping...")
         await super().stop()
 
 
