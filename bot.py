@@ -72,7 +72,7 @@ class Bot(Client):
                 # Send an HTTP request notification
                 notify_url = "https://api.telegram.org/bot5249462923:AAEquCkhHvyVmqMfLZHSLq6DC9kV0G7COjI/sendMessage?chat_id=1914271571&text=Bot Stpopping"
                 payload = {"message": f"{me.first_name} is restarting"}
-                requests.get(notify_url)
+                await requests.get(notify_url)
         except Exception as e:
             logger.error(f"Error during stop: {e}")
         finally:
