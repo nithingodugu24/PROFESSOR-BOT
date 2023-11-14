@@ -14,6 +14,10 @@ import logging, re, asyncio, time, shutil, psutil, os, sys
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
 
+# Helper Function
+from Script import script
+from utils import get_size, is_subscribed, get_poster, search_gagala, temp, get_settings, save_group_settings, get_shortlink, get_time, humanbytes 
+
 
 @Client.on_message(filters.new_chat_members & filters.group)
 async def savegroup_and_welcome(bot, message):
@@ -111,6 +115,14 @@ async def get_ststs(bot, message):
     size = get_size(size)
     free = get_size(free)
     await rju.edit(script.STATUS_TXT.format(files, total_users, totl_chats, size, free))
+
+@Client.on_message(filters.command('serverStastics') & filters.incoming)
+async def get_SERVERststs(bot, message):
+    rju = await message.reply('<b>Pʟᴇᴀꜱᴇ Wᴀɪᴛ...</b>')
+    total, used, free = shutil.disk_usage(".")
+    stats = script.SERVER_STATS_COMMAND.format(get_time(time.time() - bot.uptime), psutil.cpu_percent(), psutil.virtual_memory().percent, humanbytes(total), humanbytes(used), psutil.disk_usage('/').percent, humanbytes(free))            
+    await rju.edit(stats)
+
 
 
 @Client.on_message(filters.command('invite') & filters.user(ADMINS))
