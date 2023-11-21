@@ -1,0 +1,6 @@
+[11/17/2023 12:58:45 PM:plugins.index:183:ERROR] 'Bot' object has no attribute 'iter_messages'
+Traceback (most recent call last):
+  File "D:\Code\GitHub\PROFESSOR-BOT\plugins\index.py", line 149, in index_files_to_db
+    async for message in bot.iter_messages(chat, lst_msg_id, temp.CURRENT):
+                         ^^^^^^^^^^^^^^^^^
+AttributeError: 'Bot' object has no attribute 'iter_messages'
