@@ -59,6 +59,10 @@ async def save_file(media):
 
 
 async def get_search_results(query, file_type=None, max_results=(MAX_RIST_BTNS), offset=0, filter=False):
+    whiteSpace = query
+    query = ""
+    for char in whiteSpace:
+        query = query + char + "\\s?"
     query = query.strip()
     if not query: raw_pattern = '.'
     elif ' ' not in query: raw_pattern = r'(\b|[\.\+\-_])' + query + r'(\b|[\.\+\-_])'
